@@ -1,6 +1,7 @@
 package com.mmall.controller.portal;
 
 import com.mmall.common.Const;
+import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.User;
 import com.mmall.service.IUserService;
@@ -89,10 +90,51 @@ public class UserController {
         return iUserService.selectQuestion(username);
     }
 
+    @GetMapping("forget_check_answer.do")
+    @ResponseBody
     public ServerResponse<String> forgerCheckAnswer(String username,String question,String answer){
-        return iUserService.selectQuestion(username);
+        return iUserService.checkAnswer(username,question,answer);
     }
 
-    
+    @GetMapping("forget_reset_password.do")
+    @ResponseBody
+    public ServerResponse<String> forgetResetPassword(String username,String passwordNew,String forgetToken){
+        return iUserService.forgetResetPassword(username,passwordNew,forgetToken);
+    }
+
+    @GetMapping("reset_password.do")
+    @ResponseBody
+    public ServerResponse<String> resetPassword(HttpSession session,String passwordOld,String passwordNew){
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null){
+            return ServerResponse.createByErrorMessage("用户未登录");
+        }
+        return iUserService.resetPassword(user,passwordNew,passwordOld);
+    }
+
+    @GetMapping("update_information.do")
+    @ResponseBody
+    public ServerResponse<User> update_information(HttpSession session,User user) {
+        User currentUser = (User) session.getAttribute(Const.CURRENT_USER);
+        if (currentUser == null) {
+            return ServerResponse.createByErrorMessage("用户未登录");
+        }
+        user.setId(currentUser.getId());
+        ServerResponse<User> response = iUserService.updateInformation(user);
+        if (response.isSuccess()){
+            session.setAttribute(Const.CURRENT_USER,response.getData());
+        }
+        return response;
+    }
+
+    @GetMapping("get_information.do")
+    @ResponseBody
+    public ServerResponse<User> get_information(HttpSession session){
+        User currentUser = (User) session.getAttribute(Const.CURRENT_USER);
+        if (currentUser == null) {
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),"用户未登录,需要强制登录");
+        }
+        return iUserService.getInformation(currentUser.getId());
+    }
 
 }
