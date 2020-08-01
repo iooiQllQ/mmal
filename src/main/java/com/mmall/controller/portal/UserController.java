@@ -5,14 +5,18 @@ import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.User;
 import com.mmall.service.IUserService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 @RequestMapping("/user/")
@@ -38,7 +42,7 @@ public class UserController {
         return response;
     }
 
-    @GetMapping("login.out")
+    @PostMapping("login.out")
     @ResponseBody
     public ServerResponse<String> login(HttpSession session) {
         session.removeAttribute(Const.CURRENT_USER);
@@ -58,7 +62,7 @@ public class UserController {
      * @param type
      * @return
      */
-    @GetMapping("check_valid.do")
+    @PostMapping("check_valid.do")
     @ResponseBody
     public ServerResponse<String> checkValid(String str, String type) {
         return iUserService.checkValid(str, type);
@@ -84,25 +88,25 @@ public class UserController {
      * @param username
      * @return
      */
-    @GetMapping("forget_get_question.do")
+    @PostMapping("forget_get_question.do")
     @ResponseBody
     public ServerResponse<String> forgerGetQuestion(String username){
         return iUserService.selectQuestion(username);
     }
 
-    @GetMapping("forget_check_answer.do")
+    @PostMapping("forget_check_answer.do")
     @ResponseBody
     public ServerResponse<String> forgerCheckAnswer(String username,String question,String answer){
         return iUserService.checkAnswer(username,question,answer);
     }
 
-    @GetMapping("forget_reset_password.do")
+    @PostMapping("forget_reset_password.do")
     @ResponseBody
     public ServerResponse<String> forgetResetPassword(String username,String passwordNew,String forgetToken){
         return iUserService.forgetResetPassword(username,passwordNew,forgetToken);
     }
 
-    @GetMapping("reset_password.do")
+    @PostMapping("reset_password.do")
     @ResponseBody
     public ServerResponse<String> resetPassword(HttpSession session,String passwordOld,String passwordNew){
         User user = (User) session.getAttribute(Const.CURRENT_USER);
@@ -112,7 +116,7 @@ public class UserController {
         return iUserService.resetPassword(user,passwordNew,passwordOld);
     }
 
-    @GetMapping("update_information.do")
+    @PostMapping("update_information.do")
     @ResponseBody
     public ServerResponse<User> update_information(HttpSession session,User user) {
         User currentUser = (User) session.getAttribute(Const.CURRENT_USER);
@@ -127,7 +131,7 @@ public class UserController {
         return response;
     }
 
-    @GetMapping("get_information.do")
+    @PostMapping("get_information.do")
     @ResponseBody
     public ServerResponse<User> get_information(HttpSession session){
         User currentUser = (User) session.getAttribute(Const.CURRENT_USER);
@@ -135,6 +139,13 @@ public class UserController {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),"用户未登录,需要强制登录");
         }
         return iUserService.getInformation(currentUser.getId());
+    }
+
+    @PostMapping("userList")
+    @ResponseBody
+    public ServerResponse<List> users() {
+
+        return iUserService.users();
     }
 
 }
