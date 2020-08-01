@@ -3,6 +3,8 @@ package com.mmall.service;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.User;
 
+import java.util.List;
+
 public interface IUserService {
     ServerResponse<User> login(String username, String password);
 
@@ -21,5 +23,7 @@ public interface IUserService {
     ServerResponse<User> updateInformation(User user);
 
     public ServerResponse<User> getInformation(Integer userId);
+
+    public ServerResponse<List> users();
 }
 
