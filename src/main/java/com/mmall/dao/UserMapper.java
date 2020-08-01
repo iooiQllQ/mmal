@@ -1,8 +1,12 @@
 package com.mmall.dao;
 
 import com.mmall.pojo.User;
+import org.apache.ibatis.annotations.Mapper;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
+@Mapper
 public interface UserMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -32,4 +36,5 @@ public interface UserMapper {
 
     int checkEmailByUserId(@Param("email") String email, @Param("userId") Integer userId);
 
+    List<User> selectUser();
 }
